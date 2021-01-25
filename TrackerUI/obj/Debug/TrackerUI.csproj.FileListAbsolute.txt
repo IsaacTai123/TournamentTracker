@@ -8,7 +8,10 @@ C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.cspro
 C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.csproj.CoreCompileInputs.cache
 C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.exe
 C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.pdb
-C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.orLabel.resources
 C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.CreateTeamForm.resources
 C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.CreateTournamentForm.resources
 C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.TournamentDashboardForm.resources
+C:\Users\user\source\repos\TournamentTracker\TrackerUI\bin\Debug\TrackerLibrary.dll
+C:\Users\user\source\repos\TournamentTracker\TrackerUI\bin\Debug\TrackerLibrary.pdb
+C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.CreatePrizeForm.resources
+C:\Users\user\source\repos\TournamentTracker\TrackerUI\obj\Debug\TrackerUI.csproj.CopyComplete
