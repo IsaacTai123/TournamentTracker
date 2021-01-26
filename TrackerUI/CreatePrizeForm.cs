@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TrackerLibrary;
 
 namespace TrackerUI
 {
@@ -19,7 +20,28 @@ namespace TrackerUI
 
         private void createPrizeButton_Click(object sender, EventArgs e)
         {
+            if (ValidateForm())
+            {
+                PrizeModel model = new PrizeModel(
+                    placeNameValue.Text,
+                    placeNumberValue.Text,
+                    prizeAmountValue.Text,
+                    prizePercentageValue.Text);
 
+                foreach (IDataConnection db in GlobalConfig.Connections)
+                {
+                    db.CreatePrize(model);
+                }
+
+                placeNameValue.Text = "";
+                placeNumberValue.Text = "";
+                prizeAmountValue.Text = "0";
+                prizePercentageValue.Text = "0";
+            }
+            else
+            {
+                MessageBox.Show("This form has invalid information. please check it and try again!");
+            }
         }
 
         private bool ValidateForm()
@@ -28,7 +50,7 @@ namespace TrackerUI
 
             //validate each field user type in the blank
             int placeNumber = 0;
-            bool placeNumberValidNumber = int.TryParse(placeNameValue.Text, out placeNumber); //if this is ture then it is the actual number, if it is false then return 0
+            bool placeNumberValidNumber = int.TryParse(placeNumberValue.Text, out placeNumber); //if this is ture then it is the actual number, if it is false then return 0
 
             //if the place is not a valid number
             if (placeNumberValidNumber == false)
@@ -47,10 +69,10 @@ namespace TrackerUI
             }
 
             decimal prizeAmount = 0;
-            int prizePercentage = 0;
+            double prizePercentage = 0;
 
             bool prizeAmountValid = decimal.TryParse(prizeAmountValue.Text, out prizeAmount);
-            bool prizePercentageValid = int.TryParse(prizePercentageValue.Text, out prizePercentage);
+            bool prizePercentageValid = double.TryParse(prizePercentageValue.Text, out prizePercentage);
 
             if (prizeAmountValid == false || prizePercentageValid == false)
             {
