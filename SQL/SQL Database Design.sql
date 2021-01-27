@@ -74,3 +74,13 @@ ALTER TABLE Matchups ADD CONSTRAINT FK_Matchups_WinnerId FOREIGN KEY (WinnerId) 
 ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_MatchupId FOREIGN KEY (MatchupId) REFERENCES Matchups(id) ON DELETE CASCADE ON UPDATE CASCADE
 ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_ParentMatchupId FOREIGN KEY (ParentMatchupId) REFERENCES Matchups(id)
 ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_TeamCompetingId FOREIGN KEY (TeamCompetingId) REFERENCES Teams(id) ON DELETE CASCADE ON UPDATE CASCADE
+
+
+
+ALTER TABLE dbo.Prizes
+ADD CONSTRAINT DF_Prizes_PrizeAmount
+DEFAULT 0 FOR PrizeAmount
+
+ALTER TABLE dbo.Prizes
+ADD CONSTRAINT DF_Prizes_PrizePercentage
+DEFAULT 0 FOR PrizePercentage
