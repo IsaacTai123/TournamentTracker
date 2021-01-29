@@ -30,3 +30,23 @@ BEGIN
 	select @id = SCOPE_IDENTITY(); -- 把最新輸入的Id拿出來, the last identity which is the new Id we just insert into.
 END
 GO
+
+CREATE PROCEDURE dbo.spPeople_Insert
+	@FirstName nvarchar(100),
+	@LastName nvarchar(100),
+	@EmailAddress nvarchar(100),
+	@CellphoneNumber varchar(20),
+	@id int = 0 out
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	insert into dbo.People (FirstName, Lastname, EmailAddress, CellphoneNumber)
+	values (@FirstName, @Lastname, @EmailAddress, @CellphoneNumber);
+
+	select @id = SCOPE_IDENTITY();
+END
+GO

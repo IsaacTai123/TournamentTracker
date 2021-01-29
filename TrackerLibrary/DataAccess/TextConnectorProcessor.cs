@@ -7,7 +7,7 @@ using System.Text;
 using TrackerLibrary.Models;
 
 // * Load the text file
-// * Convert the text to List<PrizeModel>
+// * Convert the text to List<****Model>
 // Find the max ID
 // Add the new record with the new ID (max + 1)
 // Convert the prizes to List<string>
