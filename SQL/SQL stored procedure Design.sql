@@ -50,3 +50,12 @@ BEGIN
 	select @id = SCOPE_IDENTITY();
 END
 GO
+
+
+CREATE PROC dbo.spPeople_GetAll
+AS
+BEGIN
+	set nocount on;
+
+	select * from People;
+END
