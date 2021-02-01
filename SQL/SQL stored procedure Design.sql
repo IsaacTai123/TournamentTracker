@@ -59,3 +59,34 @@ BEGIN
 
 	select * from People;
 END
+
+
+CREATE PROC dbo.spTeams_Insert
+	@TeamName nvarchar(100),
+	@id int = 0 output
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO dbo.Teams (TeamName)
+	VALUES (@TeamName);
+
+	SELECT @id = SCOPE_IDENTITY();
+END
+GO
+
+
+CREATE PROC dbo.spTeamMembers_Insert
+	@TeamId int,
+	@PersonId int,
+	@id int = 0 out
+AS
+BEGIN
+	SET  NOCOUNT ON;
+
+	INSERT INTO TeamMembers (TeamId, PersonId)
+	VALUES (@TeamId, @PersonId);
+
+	SELECT @id = SCOPE_iDENTITY();
+END
+GO
