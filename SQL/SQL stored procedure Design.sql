@@ -115,3 +115,18 @@ BEGIN
 
 END
 GO
+
+
+-- Gets the people on a given team
+Alter PROC dbo.spTeamMembers_GetByTeam
+	@TeamId int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	select p.*
+	from dbo.TeamMembers m
+	inner join dbo.People p 
+	on m.PersonId = p.Id
+	where m.TeamId = @TeamId
+END
