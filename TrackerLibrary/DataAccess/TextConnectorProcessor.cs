@@ -99,7 +99,13 @@ namespace TrackerLibrary.DataAccess.TextHelpers
                 foreach (string id in personId)
                 {
                     t.TeamMembers.Add(people.Where(x => x.Id == int.Parse(id)).First()); //the first one mean the first item, see this in video 34:00
+                    
+                //    t.TeamMembers.Add((from x in people
+                //                      where x.Id == int.Parse(id)
+                //                      select x).First());
                 }
+
+                output.Add(t);
             }
 
             return output;
