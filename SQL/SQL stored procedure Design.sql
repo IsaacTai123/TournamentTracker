@@ -130,3 +130,51 @@ BEGIN
 	on m.PersonId = p.Id
 	where m.TeamId = @TeamId
 END
+
+
+alter proc dbo.spTournaments_Insert
+	@TournamentName nvarchar(100),
+	@EntryFee money,
+	@id int = 0 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.Tournaments (TournamentName, EntryFee, Active)
+	values (@TournamentName, @EntryFee, 1)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+
+create proc dbo.spTournamentPrizes_Insert
+	@TournamentId int,
+	@PrizeId int,
+	@id int = 0 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.TournamentPrizes (TournamentId, PrizeId)
+	values (@TournamentId, @PrizeId)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+
+create proc dbo.spTournamentEntries_Insert
+	@TournamentId int,
+	@TeamId int,
+	@id int = 0 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.TournamentEntries (TournamentId, TeamId)
+	values (@TournamentId, @TeamId)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO

@@ -1,10 +1,13 @@
 USE [Tournaments]
+Drop table dbo.Tournaments
 
 CREATE TABLE Tournaments (
 	id int NOT NULL IDENTITY(1, 1) PRIMARY KEY,
 	TournamentName nvarchar(100) NOT NULL,
-	EntryFee money
+	EntryFee money NOT NULL,
 )
+
+Alter table dbo.Tournaments Add Active bit NOT NULL
 
 CREATE TABLE TournamentEntries (
 	id int NOT NULL IDENTITY(1, 1) PRIMARY KEY,

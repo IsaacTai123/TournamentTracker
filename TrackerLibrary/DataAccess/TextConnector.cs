@@ -13,6 +13,7 @@ namespace TrackerLibrary.DataAccess
         private const string PrizesFile = "PrizeModels.csv";
         private const string PeopleFile = "PersonModels.csv";
         private const string TeamFile = "TeamModels.csv";
+        private const string TournamentFile = "TournamentModels.csv";
 
         public PersonModel CreatePerson(PersonModel model)
         {
@@ -76,6 +77,27 @@ namespace TrackerLibrary.DataAccess
 
             teams.SaveToTeamFile(TeamFile);
             return model;
+        }
+
+        // 這邊我用 void 因為instances 不需要來回傳送新資料, 如果有兩個地方有用到這個 只要改動一邊 那麼另一邊也會自動更新
+        // instances passed don't have to pass back and forth, once they have been two different locations you can modify either location and they both are updated.
+        public void CreateTournament(TournamentModel model)
+        {
+            List<TournamentModel> tournament = TournamentFile
+                .FullFilePath()
+                .LoadFile()
+                .ConvertToTournamentModels(PeopleFile, TeamFile, PrizesFile);
+
+            int currentId = 0;
+            if (tournament.Count > 0)
+            {
+                currentId = tournament.OrderByDescending(x => x.Id).First().Id + 1;
+            }
+
+            model.Id = currentId;
+            tournament.Add(model);
+
+            tournament.SaveToTournamentFile(TournamentFile);
         }
 
         public List<PersonModel> GetPerson_All()
