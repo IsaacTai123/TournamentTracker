@@ -151,7 +151,9 @@ namespace TrackerUI
             tm.Prizes = selectedPrizes;
             tm.EnteredTeams = selectedTeams;
 
-            // TODO - Create our matchups
+            // Create our matchups
+            TournamentLogic.CreateRounds(tm); // it will put them right in that tournament model variable, because again we don't have to pass it back and forth we pass it in
+                                              // now both have that same address that same location therefore they can go on to the next step
             
             // Create Tournament entry
             // Create all of the Prizes entries

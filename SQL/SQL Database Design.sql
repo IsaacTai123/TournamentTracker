@@ -62,6 +62,11 @@ CREATE TABLE MatchupEntries (
 	Score int NOT NULL
 )
 
+alter table dbo.MatchupEntries alter column ParentMatchupId int
+alter table dbo.MatchupEntries alter column TeamCompetingId int
+alter table dbo.MatchupEntries alter column Score int
+
+
 
 ALTER TABLE TournamentEntries ADD CONSTRAINT FK_TournamentEntries_TournamentId FOREIGN KEY (TournamentId) REFERENCES Tournaments(id) ON DELETE CASCADE ON UPDATE CASCADE
 ALTER TABLE TournamentEntries ADD CONSTRAINT FK_TournamentEntries_TeamId FOREIGN KEY (TeamId) REFERENCES Teams(id) ON DELETE CASCADE ON UPDATE CASCADE
