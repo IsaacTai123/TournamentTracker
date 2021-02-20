@@ -14,6 +14,8 @@ namespace TrackerLibrary.DataAccess
         private const string PeopleFile = "PersonModels.csv";
         private const string TeamFile = "TeamModels.csv";
         private const string TournamentFile = "TournamentModels.csv";
+        private const string MatchupFile = "MatchupModel.csv";
+        private const string MatchupEntryFile = "MatchupEntryModel.csv";
 
         public PersonModel CreatePerson(PersonModel model)
         {
@@ -79,6 +81,16 @@ namespace TrackerLibrary.DataAccess
             return model;
         }
 
+        public List<PersonModel> GetPerson_All()
+        {
+            return PeopleFile.FullFilePath().LoadFile().ConvertToPersonModels();
+        }
+
+        public List<TeamModel> GetTeam_All()
+        {
+            return TeamFile.FullFilePath().LoadFile().ConvertToTeamModels(PeopleFile);
+        }
+
         // 這邊我用 void 因為instances 不需要來回傳送新資料, 如果有兩個地方有用到這個 只要改動一邊 那麼另一邊也會自動更新
         // instances passed don't have to pass back and forth, once they have been two different locations you can modify either location and they both are updated.
         public void CreateTournament(TournamentModel model)
@@ -95,19 +107,13 @@ namespace TrackerLibrary.DataAccess
             }
 
             model.Id = currentId;
+
+            // 在存入tournament 之前 我們要像SQL 一樣把裡面Id對應的model 都存入個別的file裡
+            model.SaveRoundsToFile(MatchupFile, MatchupEntryFile);
+
             tournament.Add(model);
 
             tournament.SaveToTournamentFile(TournamentFile);
-        }
-
-        public List<PersonModel> GetPerson_All()
-        {
-            return PeopleFile.FullFilePath().LoadFile().ConvertToPersonModels();
-        }
-
-        public List<TeamModel> GetTeam_All()
-        {
-            return TeamFile.FullFilePath().LoadFile().ConvertToTeamModels(PeopleFile);
         }
     }
 }

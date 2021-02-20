@@ -178,3 +178,36 @@ Begin
 	select @id = SCOPE_IDENTITY();
 END
 GO
+
+create proc dbo.spMatchups_Insert
+	@TournamentId int,
+	@MatchupRound int,
+	@id int = 1 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.Matchups (TournamentId, MatchupRound)
+	values (@TournamentId, @MatchupRound)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+create proc dbo.spMatchupEntries_Insert
+	@MatchupId int,
+	@ParentMatchupId int,
+	@TeamCompetingId int,
+	@id int = 1 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.MatchupEntries (MatchupId, ParentMatchupId, TeamCompetingId)
+	VALUES (@MatchupId, @ParentMatchupId, @TeamCompetingId)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+

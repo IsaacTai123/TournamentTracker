@@ -54,6 +54,9 @@ CREATE TABLE Matchups (
 	MatchupRound int NOT NULL
 )
 
+-- ALTER TABLE dbo.Matchups ADD Tournament int NOT NULL AFTER `WinnerId`; this is not allow
+alter table dbo.Matchups alter column WinnerId int
+
 CREATE TABLE MatchupEntries (
 	id int NOT NULL IDENTITY(1, 1) PRIMARY KEY,
 	MatchupId int NOT NULL,
@@ -64,7 +67,7 @@ CREATE TABLE MatchupEntries (
 
 alter table dbo.MatchupEntries alter column ParentMatchupId int
 alter table dbo.MatchupEntries alter column TeamCompetingId int
-alter table dbo.MatchupEntries alter column Score int
+alter table dbo.MatchupEntries alter column Score float
 
 
 
@@ -81,9 +84,10 @@ ALTER TABLE Matchups ADD CONSTRAINT FK_Matchups_WinnerId FOREIGN KEY (WinnerId) 
 
 ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_MatchupId FOREIGN KEY (MatchupId) REFERENCES Matchups(id)
 ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_ParentMatchupId FOREIGN KEY (ParentMatchupId) REFERENCES Matchups(id)
-ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_TeamCompetingId FOREIGN KEY (TeamCompetingId) REFERENCES Teams(id) ON DELETE CASCADE ON UPDATE CASCADE
+ALTER TABLE MatchupEntries ADD CONSTRAINT FK_MatchupEntries_TeamCompetingId FOREIGN KEY (TeamCompetingId) REFERENCES Teams(id)
 
-
+ALTER TABLE Matchups ADD CONSTRAINT FK_Matchups_TournamentId FOREIGN KEY (TournamentId) REFERENCES Tournaments(id) ON DELETE CASCADE ON UPDATE CASCADE
+ 
 
 ALTER TABLE dbo.Prizes
 ADD CONSTRAINT DF_Prizes_PrizeAmount
