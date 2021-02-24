@@ -1,14 +1,13 @@
-Create proc spMatchups_GetByTournament
+alter proc dbo.spMatchups_GetByTournament
 	@TournamentId int
 as
 begin
 	set nocount on;
 
-	select m.id, m.WinnerId, m.MatchupRound 
-	from TournamentEntries t
-	join Matchups m
-	on t.TeamId = m.id
-	where TournamentId = @TournamentId;
+	select m.*
+	from dbo.Matchups m
+	where m.TournamentId = @TournamentId;
+
 end
 
 
@@ -92,7 +91,7 @@ END
 GO
 
 
-Create proc dbo.spTeam_GetByTournament
+Alter proc dbo.spTeam_GetByTournament
 	@TournamentId int
 AS
 BEGIN
@@ -130,3 +129,123 @@ BEGIN
 	on m.PersonId = p.Id
 	where m.TeamId = @TeamId
 END
+
+
+alter proc dbo.spTournaments_Insert
+	@TournamentName nvarchar(100),
+	@EntryFee money,
+	@id int = 0 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.Tournaments (TournamentName, EntryFee, Active)
+	values (@TournamentName, @EntryFee, 1)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+
+create proc dbo.spTournamentPrizes_Insert
+	@TournamentId int,
+	@PrizeId int,
+	@id int = 0 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.TournamentPrizes (TournamentId, PrizeId)
+	values (@TournamentId, @PrizeId)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+
+create proc dbo.spTournamentEntries_Insert
+	@TournamentId int,
+	@TeamId int,
+	@id int = 0 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.TournamentEntries (TournamentId, TeamId)
+	values (@TournamentId, @TeamId)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+create proc dbo.spMatchups_Insert
+	@TournamentId int,
+	@MatchupRound int,
+	@id int = 1 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.Matchups (TournamentId, MatchupRound)
+	values (@TournamentId, @MatchupRound)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+create proc dbo.spMatchupEntries_Insert
+	@MatchupId int,
+	@ParentMatchupId int,
+	@TeamCompetingId int,
+	@id int = 1 output
+AS
+Begin
+	SET NOCOUNT ON;
+	
+	insert into dbo.MatchupEntries (MatchupId, ParentMatchupId, TeamCompetingId)
+	VALUES (@MatchupId, @ParentMatchupId, @TeamCompetingId)
+
+	select @id = SCOPE_IDENTITY();
+END
+GO
+
+
+alter proc dbo.spTournaments_GetAll
+
+as
+begin
+	set nocount on; 
+	
+	select *
+	from dbo.Tournaments
+	where Active = 1;
+end
+go
+
+alter proc dbo.spPrizes_GetByTournament
+	@TournamentId int
+	 
+as
+begin
+	set nocount on;
+
+	select p.*
+	from dbo.Prizes p
+	inner join dbo.TournamentPrizes t on p.id = t.PrizeId
+	where t.TournamentId = @TournamentId;
+end
+go
+
+
+alter proc dbo.spMatchupEntries_GetByMatchup
+	@matchupId int
+as
+begin
+	set nocount on;
+
+	select *
+	from dbo.MatchupEntries
+	where MatchupId = @matchupId
+
+end
+go
