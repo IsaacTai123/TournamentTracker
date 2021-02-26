@@ -164,7 +164,6 @@ namespace TrackerUI
             double teamOneScore = 0;
             double teamTwoScore = 0;
 
-
             for (int i = 0; i < m.Entris.Count; i++)
             {
                 if (i == 0)
@@ -204,41 +203,8 @@ namespace TrackerUI
                 }
             }
 
-            if (teamOneScore > teamTwoScore)
-            {
-                // Team one wins
-                m.Winner = m.Entris[0].TeamCompeting;
-            }
-            else if (teamOneScore < teamTwoScore)
-            {
-                m.Winner = m.Entris[1].TeamCompeting;
-            }
-            else
-            {
-                MessageBox.Show("I do not handle tie games");
-            }
-
-            // update the teamCompeting for the next round
-            foreach (List<MatchupModel> matchups in tournament.Rounds)
-            {
-                foreach (MatchupModel matchup in matchups)
-                {
-                    foreach (MatchupEntryModel me in matchup.Entris)
-                    {
-                        if (me.ParentMatchup != null)
-                        {
-                            if (me.ParentMatchup.Id == m.Id)
-                            {
-                                me.TeamCompeting = m.Winner;
-                                GlobalConfig.Connection.UpdateMatchup(matchup);
-                            }
-                        }
-                    }
-                }
-            }
-
+            TournamentLogic.UpdateTournamentResults(tournament);
             LoadMatchups((int)roundDropDown.SelectedItem);
-            GlobalConfig.Connection.UpdateMatchup(m);
         }
     }
 }

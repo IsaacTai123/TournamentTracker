@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using TrackerLibrary.Models;
@@ -25,6 +26,104 @@ namespace TrackerLibrary
             CreateOtherRounds(model, rounds); // again we're not passing back a value, because we're operating
                                               // directly on our tournament model instance therefore no pass back 
                                               // is necessary
+
+            UpdateTournamentResults(model); // 這樣就可以讓 every bye moved into the next round
+        }
+
+        public static void UpdateTournamentResults(TournamentModel model)
+        {
+            // the matchup need to be score
+            List<MatchupModel> toScore = new List<MatchupModel>();
+
+            foreach (List<MatchupModel> round in model.Rounds)
+            {
+                foreach (MatchupModel rm in round)
+                {
+                    if (rm.Winner == null && (rm.Entris.Any(x => x.Score != 0) || rm.Entris.Count == 1))
+                    {
+                        toScore.Add(rm);
+                    } 
+                }
+            }
+
+            MarkWinnerInMatchups(toScore);
+            AdvanceWinners(toScore, model);
+
+            toScore.ForEach(x => GlobalConfig.Connection.UpdateMatchup(x));
+        }
+
+        private static void AdvanceWinners(List<MatchupModel> models, TournamentModel tournament)
+        {
+            //// update the teamCompeting for the next round
+            foreach (MatchupModel m in models)
+            {
+                foreach (List<MatchupModel> matchups in tournament.Rounds)
+                {
+                    foreach (MatchupModel matchup in matchups)
+                    {
+                        foreach (MatchupEntryModel me in matchup.Entris)
+                        {
+                            if (me.ParentMatchup != null)
+                            {
+                                if (me.ParentMatchup.Id == m.Id)
+                                {
+                                    me.TeamCompeting = m.Winner;
+                                    GlobalConfig.Connection.UpdateMatchup(matchup);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void MarkWinnerInMatchups(List<MatchupModel> models)
+        {
+            // greater or lesser
+            string greaterWins = ConfigurationManager.AppSettings["greaterWins"];
+
+            foreach (MatchupModel m in models)
+            {
+                // Checks for bye week entry
+                if (m.Entris.Count == 1)
+                {
+                    m.Winner = m.Entris[0].TeamCompeting;
+                    continue;
+                }
+
+                // 0 means false, or low score wins
+                if (greaterWins == "0")
+                {
+                    if (m.Entris[0].Score < m.Entris[1].Score)
+                    {
+                        m.Winner = m.Entris[0].TeamCompeting;
+                    }
+                    else if (m.Entris[1].Score < m.Entris[0].Score)
+                    {
+                        m.Winner = m.Entris[1].TeamCompeting;
+                    }
+                    else
+                    {
+                        throw new Exception("we do not allow ties in this application");
+                    }
+                }
+                else
+                {
+                    // 1 means true, or high score wins
+                    if (m.Entris[0].Score > m.Entris[1].Score)
+                    {
+                        m.Winner = m.Entris[0].TeamCompeting;
+                    }
+                    else if (m.Entris[1].Score > m.Entris[0].Score)
+                    {
+                        m.Winner = m.Entris[1].TeamCompeting;
+                    }
+                    else
+                    {
+                        throw new Exception("we do not allow ties in this application");
+                    }
+                } 
+            }
         }
 
         private static void CreateOtherRounds(TournamentModel model, int rounds)
