@@ -48,7 +48,7 @@ namespace TrackerLibrary.DataAccess
             //@PrizePercentage float,
             //@id int = 0 output
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(DB)))
-           {
+            {
                 var p = new DynamicParameters();
                 p.Add("@PlaceNumber", model.PlaceNumber);
                 p.Add("@PlaceName", model.PlaceName);
@@ -61,7 +61,7 @@ namespace TrackerLibrary.DataAccess
                 model.Id = p.Get<int>("@id");
 
                 return model;
-           }
+            }
         }
 
         public TeamModel createTeam(TeamModel model)
@@ -311,6 +311,34 @@ namespace TrackerLibrary.DataAccess
             }
 
             return output;
+        }
+
+        public void UpdateMatchup(MatchupModel model)
+        {
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(DB)))
+            {
+                // spmatchups_update @id, @WinnerId
+                var p = new DynamicParameters();
+                if (model.Winner != null)
+                {
+                    p.Add("@id", model.Id);
+                    p.Add("@Winnerid", model.Winner.Id);
+                    connection.Execute("dbo.spMatchups_Update", p, commandType: CommandType.StoredProcedure);
+                }
+                
+                // dbo.spMatchupEntries_Update id, TeamCompetingId, Score
+                foreach (MatchupEntryModel me in model.Entris)
+                {
+                    if (me.TeamCompeting != null)
+                    {
+                        p = new DynamicParameters();
+                        p.Add("@id", me.Id);
+                        p.Add("@TeamCompetingId", me.TeamCompeting.Id);
+                        p.Add("@Score", me.Score);
+                        connection.Execute("dbo.spMatchupEntries_Update", p, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
         }
     }
 }

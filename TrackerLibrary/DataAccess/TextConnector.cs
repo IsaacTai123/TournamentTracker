@@ -100,7 +100,7 @@ namespace TrackerLibrary.DataAccess
                 .LoadFile()
                 .ConvertToTournamentModels(PeopleFile, TeamFile, PrizesFile);
 
-            int currentId = 0;
+            int currentId = 1;
             if (tournament.Count > 0)
             {
                 currentId = tournament.OrderByDescending(x => x.Id).First().Id + 1;
@@ -122,6 +122,11 @@ namespace TrackerLibrary.DataAccess
                 .FullFilePath()
                 .LoadFile()
                 .ConvertToTournamentModels(PeopleFile, TeamFile, PrizesFile);
+        }
+
+        public void UpdateMatchup(MatchupModel model)
+        {
+            model.UpdateMatchupToFile();
         }
     }
 }

@@ -13,6 +13,11 @@ namespace TrackerLibrary.DataAccess
         List<TeamModel> GetTeam_All();
         TeamModel createTeam(TeamModel model);
         void CreateTournament(TournamentModel model);
+
+        // why not return type, well because if we work on an object then anything we do gets passed back to the caller because again it's just that address 
+        // but also we're just updating, we're just saying taking the information that i already have input the database so i can get back next time
+        // i call the database
+        void UpdateMatchup(MatchupModel model);
         List<TournamentModel> GetTournament_All();
     }
 }
