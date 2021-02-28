@@ -93,8 +93,11 @@ namespace TrackerLibrary.DataAccess
                 SaveTournamentEntries(connection, model);
                 SaveTournamentRounds(connection, model);
 
+                // 在我們Create tournament 上傳到sql/Textfile之後 我們要把每個bye moved into the next round
+                TournamentLogic.UpdateTournamentResults(model);
+
                 //return model; // 我們可以不用return back, because instances passed don't have to pass back and forth, once they have been two different locations
-                              // you can modify either location and they both are updated.
+                // you can modify either location and they both are updated.
             }
         }
 

@@ -26,8 +26,6 @@ namespace TrackerLibrary
             CreateOtherRounds(model, rounds); // again we're not passing back a value, because we're operating
                                               // directly on our tournament model instance therefore no pass back 
                                               // is necessary
-
-            UpdateTournamentResults(model); // 這樣就可以讓 every bye moved into the next round
         }
 
         public static void UpdateTournamentResults(TournamentModel model)

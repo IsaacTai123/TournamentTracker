@@ -102,6 +102,9 @@ namespace TrackerLibrary.DataAccess
             tournament.Add(model);
 
             tournament.SaveToTournamentFile();
+
+            // 在我們Create tournament 上傳到sql/Textfile之後 我們要把每個bye moved into the next round
+            TournamentLogic.UpdateTournamentResults(model);
         }
 
         public List<TournamentModel> GetTournament_All()

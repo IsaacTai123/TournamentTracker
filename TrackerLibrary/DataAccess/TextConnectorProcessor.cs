@@ -456,8 +456,10 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             // save to file
             lines = new List<string>();
 
-            matchups.OrderBy(x => x.Id);
-            foreach (MatchupModel m in matchups)
+            // 因為在更新winner && Score 的時候是把對應的id拿出來進行更新的 所以重新寫入的時候id 會錯亂 所以這邊用orderby 重新整理一次
+            IEnumerable<MatchupModel> sortMatchups = matchups.OrderBy(x => x.Id);
+
+            foreach (MatchupModel m in sortMatchups)
             {
                 string winner = "";
                 if (m.Winner != null)
@@ -525,9 +527,9 @@ namespace TrackerLibrary.DataAccess.TextHelpers
             entries.Remove(oldMatchupEntryModel);
             entries.Add(entry);
 
-            entries.OrderBy(x => x.Id);
+            IEnumerable<MatchupEntryModel> sortEntries = entries.OrderBy(x => x.Id);
             //save to file
-            foreach (MatchupEntryModel e in entries)
+            foreach (MatchupEntryModel e in sortEntries)
             {
                 string parent = "";
                 if (e.ParentMatchup != null)
