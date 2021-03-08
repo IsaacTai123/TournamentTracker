@@ -41,5 +41,10 @@ namespace TrackerLibrary
             var output = ConfigurationManager.ConnectionStrings[name].ConnectionString;
             return output;
         }
+
+        public static string AppKeyLoopup(string key)
+        {
+            return ConfigurationManager.AppSettings[key];
+        }
     }
 }
