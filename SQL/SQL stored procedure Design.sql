@@ -249,3 +249,35 @@ begin
 
 end
 go
+
+
+create proc dbo.spMatchups_Update
+	@id int,
+	@WinnerId int
+as
+begin
+	set nocount on;
+
+	update dbo.Matchups
+	set WinnerId = @WinnerId
+	where id = @id;
+
+end
+go
+
+
+create proc dbo.spMatchupEntries_Update
+	@id int,
+	@TeamCompetingId int = null,
+	@Score float = null
+as
+begin
+	set nocount on;
+
+	update dbo.MatchupEntries
+	set TeamCompetingId = @TeamCompetingId, Score = @Score
+	where id = @id;
+
+end
+go
+

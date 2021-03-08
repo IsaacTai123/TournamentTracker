@@ -1,3 +1,13 @@
+
+
+Select t.TournamentName, t.EntryFee, t.Active, m.WinnerId, m.MatchupRound, me.ParentMatchupId, me.TeamCompetingId, me.Score
+from dbo.Tournaments t
+inner join dbo.Matchups m on t.Id = m.TournamentId
+inner join dbo.MatchupEntries me on me.MatchupId = m.Id
+inner join dbo.Matchups mp on mp.id = me.ParentMatchupId
+
+
+
 USE [Tournaments]
 Drop table dbo.Tournaments
 

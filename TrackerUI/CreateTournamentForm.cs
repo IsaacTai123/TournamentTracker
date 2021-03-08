@@ -159,6 +159,11 @@ namespace TrackerUI
             // Create all of the Prizes entries
             // Create all of team entries
             GlobalConfig.Connection.CreateTournament(tm);
+            tm.AlterUsersToNewRound(); //send the Email of the first round when the tournament is generate
+
+            TournamentViewerForm frm = new TournamentViewerForm(tm);
+            frm.Show();
+            this.Close();
         }
     }
 }

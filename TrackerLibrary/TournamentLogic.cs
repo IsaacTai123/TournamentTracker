@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using TrackerLibrary.Models;
@@ -25,6 +26,177 @@ namespace TrackerLibrary
             CreateOtherRounds(model, rounds); // again we're not passing back a value, because we're operating
                                               // directly on our tournament model instance therefore no pass back 
                                               // is necessary
+        }
+
+        public static void UpdateTournamentResults(TournamentModel model)
+        {
+            int startingRound = model.CheckCurrentRound();
+            // the matchup need to be score
+            List<MatchupModel> toScore = new List<MatchupModel>();
+
+            foreach (List<MatchupModel> round in model.Rounds)
+            {
+                foreach (MatchupModel rm in round)
+                {
+                    if (rm.Winner == null && (rm.Entris.Any(x => x.Score != 0) || rm.Entris.Count == 1))
+                    {
+                        toScore.Add(rm);
+                    } 
+                }
+            }
+
+            MarkWinnerInMatchups(toScore);
+            AdvanceWinners(toScore, model);
+
+            toScore.ForEach(x => GlobalConfig.Connection.UpdateMatchup(x));
+            int endingRound = model.CheckCurrentRound();
+            if (endingRound > startingRound)
+            {
+                model.AlterUsersToNewRound();
+            }
+        }
+
+        public static void AlterUsersToNewRound(this TournamentModel model)
+        {
+            int currentRoundNumber = model.CheckCurrentRound();
+            List<MatchupModel> currentRound = model.Rounds.Where(x => x.First().MatchupRound == currentRoundNumber).First();
+
+            foreach (MatchupModel matchup in currentRound)
+            {
+                foreach (MatchupEntryModel me in matchup.Entris)
+                {
+                    foreach (PersonModel p in me.TeamCompeting.TeamMembers)
+                    {
+                        AlterPersonToNewRound(p, me.TeamCompeting.TeamName, matchup.Entris.Where(x => x.TeamCompeting != me.TeamCompeting).FirstOrDefault());
+                    }
+                }
+            }
+        }
+
+        private static void AlterPersonToNewRound(PersonModel p, string teamName, MatchupEntryModel competitor)
+        {
+            // To validate email you can use regular Expression or regex
+            if (p.EmailAddress.Length == 0)
+            {
+                // if there is no Email, then we dont do anything.
+                return;
+            }
+
+            string to = "";
+            string subject = "";
+            StringBuilder body = new StringBuilder();
+            
+            if (competitor != null)
+            {
+                subject = $"You have a new matchup with { competitor.TeamCompeting.TeamName }";
+
+                body.AppendLine("<h1>You have a new matchup</h1>");
+                body.Append("<strong>Competitor: </strong>");
+                body.Append(competitor.TeamCompeting.TeamName);
+                body.AppendLine();
+                body.AppendLine();
+                body.AppendLine("Have a great time!");
+                body.AppendLine("~ Tournament Tracker");
+            }
+            else
+            {
+                subject = "You have a bye week this round";
+                body.AppendLine("Enjoy your rond off!");
+                body.AppendLine("~ Tournament Tracker");
+            }
+
+            to = p.EmailAddress;
+
+
+            EmailLogic.SendEmail(to, subject, body.ToString());
+        }
+
+        private static int CheckCurrentRound(this TournamentModel model)
+        {
+            int output = 1;
+
+            foreach (List<MatchupModel> round in model.Rounds)
+            {
+                if (round.All(x => x.Winner != null))
+                {
+                    output += 1; 
+                }
+            }
+            return output;
+        }
+
+        private static void AdvanceWinners(List<MatchupModel> models, TournamentModel tournament)
+        {
+            //// update the teamCompeting for the next round
+            foreach (MatchupModel m in models)
+            {
+                foreach (List<MatchupModel> matchups in tournament.Rounds)
+                {
+                    foreach (MatchupModel matchup in matchups)
+                    {
+                        foreach (MatchupEntryModel me in matchup.Entris)
+                        {
+                            if (me.ParentMatchup != null)
+                            {
+                                if (me.ParentMatchup.Id == m.Id)
+                                {
+                                    me.TeamCompeting = m.Winner;
+                                    GlobalConfig.Connection.UpdateMatchup(matchup);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void MarkWinnerInMatchups(List<MatchupModel> models)
+        {
+            // greater or lesser
+            string greaterWins = ConfigurationManager.AppSettings["greaterWins"];
+
+            foreach (MatchupModel m in models)
+            {
+                // Checks for bye week entry
+                if (m.Entris.Count == 1)
+                {
+                    m.Winner = m.Entris[0].TeamCompeting;
+                    continue;
+                }
+
+                // 0 means false, or low score wins
+                if (greaterWins == "0")
+                {
+                    if (m.Entris[0].Score < m.Entris[1].Score)
+                    {
+                        m.Winner = m.Entris[0].TeamCompeting;
+                    }
+                    else if (m.Entris[1].Score < m.Entris[0].Score)
+                    {
+                        m.Winner = m.Entris[1].TeamCompeting;
+                    }
+                    else
+                    {
+                        throw new Exception("we do not allow ties in this application");
+                    }
+                }
+                else
+                {
+                    // 1 means true, or high score wins
+                    if (m.Entris[0].Score > m.Entris[1].Score)
+                    {
+                        m.Winner = m.Entris[0].TeamCompeting;
+                    }
+                    else if (m.Entris[1].Score > m.Entris[0].Score)
+                    {
+                        m.Winner = m.Entris[1].TeamCompeting;
+                    }
+                    else
+                    {
+                        throw new Exception("we do not allow ties in this application");
+                    }
+                } 
+            }
         }
 
         private static void CreateOtherRounds(TournamentModel model, int rounds)
