@@ -9,6 +9,8 @@ namespace TrackerLibrary.Models
     /// </summary>
     public class TournamentModel
     {
+        public event EventHandler<DateTime> OnTournamentComplete; // so this it for creating event but now i need to create a method that fire this event.
+
         /// <summary>
         /// The unique identifier for the Tournament
         /// </summary>
@@ -35,5 +37,10 @@ namespace TrackerLibrary.Models
         /// The matchups per round
         /// </summary>
         public List<List<MatchupModel>> Rounds { get; set; } = new List<List<MatchupModel>>();
+
+        public void CompleteTournament()
+        {
+            OnTournamentComplete?.Invoke(this, DateTime.Now);
+        }
     }
 }
