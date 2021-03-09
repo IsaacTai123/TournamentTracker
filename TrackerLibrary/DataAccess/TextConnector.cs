@@ -119,5 +119,21 @@ namespace TrackerLibrary.DataAccess
         {
             model.UpdateMatchupToFile();
         }
+
+        public void CompleteTournament(TournamentModel model)
+        {
+            List<TournamentModel> tournament = GlobalConfig.TournamentFile
+                .FullFilePath()
+                .LoadFile()
+                .ConvertToTournamentModels();
+
+            //tournament.Remove(model); //this doesn't remove the model from the list.
+
+            tournament.RemoveAt(tournament.Count - 1); // 上面的不知為什麼無法remove the model, 所以用這個刪掉對應的位置 也就是最後一個
+
+            tournament.SaveToTournamentFile();
+
+            //TournamentLogic.UpdateTournamentResults(model); // 這行不需要 因為已經結束了 不需要更新 而且加上這行會造成infinite loop
+        }
     }
 }

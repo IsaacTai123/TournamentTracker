@@ -281,3 +281,17 @@ begin
 end
 go
 
+
+create proc dbo.spTournaments_Complete
+	@id int
+as
+begin
+	set nocount on;
+
+	update dbo.Tournaments
+	set Active = 0
+	where id = @id;
+
+end
+go
+
