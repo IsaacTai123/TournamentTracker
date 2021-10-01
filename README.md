@@ -1,7 +1,7 @@
 # Tournament Tracker
 
-- **C# : Windows Form App**
-- **Mysql Database**
+- **Windows Forms App**
+- **SQL Database**
 - **Text File Stored Data**
 
 ## Key Concepts
